@@ -1,4 +1,3 @@
-# @private
 class ActsAsNpsRateableMigration < ActiveRecord::Migration
   def change
     create_table :nps_ratings do |t|
