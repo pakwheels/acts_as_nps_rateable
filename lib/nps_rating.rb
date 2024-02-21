@@ -15,8 +15,7 @@ module ActsAsNpsRateable
 
     scope :promoters, lambda { where(score: [9, 10]) }
     scope :passives, lambda { where(score: [7, 8]) }
-    scope :detractors, lambda { where(NpsRating.arel_table[:score].lteq(6)) }
-
+    scope :detractors, lambda { where('score <= 6') }
     scope :with_comments, lambda { where.not(comments: nil) }
 
     def self.calculate_for relevant_ratings
@@ -31,21 +30,6 @@ module ActsAsNpsRateable
 
     def comments= comments
       write_attribute(:comments, comments.present? ? comments : nil)
-    end
-
-    def response= response
-      if response.present?
-        write_attribute(:response, response)
-        write_attribute(:responded_at, Time.now)
-      end
-    end
-
-    def upvote!
-      ActsAsNpsRateable::NpsRating.update_counters(id, up_votes: 1, net_votes: 1)
-    end
-
-    def downvote!
-      ActsAsNpsRateable::NpsRating.update_counters(id, down_votes: 1, net_votes: -1)
     end
   end
 end
